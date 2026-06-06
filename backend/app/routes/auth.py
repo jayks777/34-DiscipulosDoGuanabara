@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import timedelta, timezone, datetime
 from jose import jwt, JWTError
-from app.core import get_current_user
+from app.core.dependencies import get_current_user
 
 from app.main import bcrypt_context, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
