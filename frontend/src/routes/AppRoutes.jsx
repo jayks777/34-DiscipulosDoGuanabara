@@ -10,6 +10,7 @@ import NotFound from "../pages/notfound";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
+import Culturas from "../pages/culturas";
 
 import PrivateRoutes from "./PrivateRoutes";
 
@@ -40,6 +41,15 @@ export default function AppRoutes() {
                     element={
                         <PrivateRoutes>
                             <Dashboard />
+                        </PrivateRoutes>
+                    }
+                />
+
+                <Route
+                    path="/culturas"
+                    element={
+                        <PrivateRoutes>
+                            <Culturas />
                         </PrivateRoutes>
                     }
                 />

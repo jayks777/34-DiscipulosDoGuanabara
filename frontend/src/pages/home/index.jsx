@@ -28,14 +28,12 @@ function Header() {
     <header className="sticky top-0 z-50 backdrop-blur bg-[#FFFDF7]/85 border-b border-black/5">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span
+          <img
+            src="../../../public/favicon.png"
             className="w-8 h-8 rounded-lg grid place-items-center text-white font-bold"
-            style={{
-              background: `linear-gradient(135deg, ${palette.greenDark}, ${palette.green})`,
-            }}
           >
-            G
-          </span>
+            
+          </img>
           <span className="text-xl font-semibold tracking-tight text-[#1F3D2B]">
             Gaia
           </span>
