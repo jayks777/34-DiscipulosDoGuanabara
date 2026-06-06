@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordRequestForm  
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import timedelta, timezone, datetime
 from jose import jwt, JWTError
@@ -32,6 +33,18 @@ def create_token(dados, tempo_expiracao = timedelta(minutes=ACCESS_TOKEN_EXPIRE_
     )
 
     return token
+
+def authenticate_user (email, senha, session: Session):
+    
+    usuario = session.query(Usuarios).filter(Usuarios.email == email).first()
+
+    if not usuario:
+        raise HTTPException(status_code=400, detail="Email ou senha invalidos")
+    
+    elif not bcrypt_context.verify(senha, usuario.senha):
+        raise HTTPException(status_code=400, detail="Email ou senha invalidos")
+    
+    return usuario  
 
 
 @auth_route.post("/create_user")
@@ -79,3 +92,19 @@ async def login (dados: UserLogin, session: Session = Depends(create_session)):
 @auth_route.get("/me", response_model=UserSchema)
 async def read_users_me(current_user: UserSchema = Depends(get_current_user)):
     return current_user
+
+
+@auth_route.post("/login-form")
+async def login_form (dados_form: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(create_session)):
+
+    usuario = authenticate_user(dados_form.username, dados_form.password, session)
+
+    if not usuario:
+        raise HTTPException(status_code=400, detail="Usuario inexistente")
+    
+    access_token = create_token(usuario.id)
+
+    return {
+        "access_token": access_token,
+        "type_token": "bearer"
+    }

@@ -13,7 +13,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
 
 App = FastAPI()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login-form")
 
 
 App.add_middleware(
@@ -27,8 +27,10 @@ App.add_middleware(
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 from app.routes.auth import auth_route
+from app.routes.cultures import culturas_route
 
 App.include_router(auth_route)
+App.include_router(culturas_route)
 
 
 #uvicorn app.main:App --reload
