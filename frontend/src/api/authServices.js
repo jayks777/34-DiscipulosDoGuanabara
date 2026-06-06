@@ -19,16 +19,16 @@ export async function login(
 }
 
 export async function register(
-    username,
+    nome,
     email,
-    password
+    senha
 ) {
     return api.postData(
-        "/auth/register",
+        "/auth/create_user",
         {
-            username,
+            nome,
             email,
-            password,
+            senha,
         }
     );
 }
