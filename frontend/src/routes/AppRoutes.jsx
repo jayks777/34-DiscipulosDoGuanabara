@@ -11,6 +11,9 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import Culturas from "../pages/culturas";
+import Financeiro from "../pages/financeiro";
+import Clima from "../pages/clima";
+import Simulacoes from "../pages/simulacao";
 
 import PrivateRoutes from "./PrivateRoutes";
 
@@ -50,6 +53,33 @@ export default function AppRoutes() {
                     element={
                         <PrivateRoutes>
                             <Culturas />
+                        </PrivateRoutes>
+                    }
+                />
+
+                <Route
+                    path="/financeiro"
+                    element={
+                        <PrivateRoutes>
+                            <Financeiro />
+                        </PrivateRoutes>
+                    }
+                />
+
+                <Route
+                    path="/clima"
+                    element={
+                        <PrivateRoutes>
+                            <Clima />
+                        </PrivateRoutes>
+                    }
+                />
+
+                <Route
+                    path="/simulacoes"
+                    element={
+                        <PrivateRoutes>
+                            <Simulacoes />
                         </PrivateRoutes>
                     }
                 />
