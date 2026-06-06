@@ -15,4 +15,3 @@ class UserLogin (BaseModel):
 
     class Config:
         from_atributer = True
-   
