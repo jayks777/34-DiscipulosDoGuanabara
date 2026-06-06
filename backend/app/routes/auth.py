@@ -44,12 +44,6 @@ async def create_user(usuario: UserSchema, session: Session = Depends(create_ses
     if novo_existente:
         raise HTTPException(status_code=400, detail="Usuario ja existente")
     else:
-        
-        print(usuario)
-        print(usuario.senha)
-        print(type(usuario.senha))
-        print(len(usuario.senha))
-        
         senha_criptografada = bcrypt_context.hash(usuario.senha)
         novo_usuario = Usuarios(nome=usuario.nome, email=usuario.email, senha=senha_criptografada)
 

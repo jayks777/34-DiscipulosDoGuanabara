@@ -22,8 +22,7 @@ class Usuarios(Base):
     nome = Column("nome", String, nullable=False)
     email = Column("email", String, nullable=False, unique=True)
     senha = Column("senha", String, nullable=False)
-    criado_em = Column("criado_em", DateTime, default=DateTime(timezone=True), server_default=func.now())
-
+    criado_em = Column(DateTime(timezone=True), server_default=func.now())
     def __init__(self, nome, email, senha):
         self.nome = nome
         self.email = email
