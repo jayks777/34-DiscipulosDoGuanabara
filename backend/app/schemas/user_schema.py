@@ -5,9 +5,16 @@ class UserSchema(BaseModel):
     email: str
     senha: str 
 
-    class config:
-        from_atributes = True
+    class Config:
+        from_attributes = True
 
+class UserResponse(BaseModel):
+    id: int
+    nome: str
+    email: str
+
+    class Config:
+        from_attributes = True
 
 class UserLogin (BaseModel):
     email: str

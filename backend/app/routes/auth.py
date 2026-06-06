@@ -10,7 +10,7 @@ from app.main import bcrypt_context, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_
 
 from app.database.models import Usuarios
 
-from app.schemas.user_schema import UserSchema, UserLogin
+from app.schemas.user_schema import UserSchema, UserLogin, UserResponse
 
 auth_route = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -59,6 +59,7 @@ async def create_user(usuario: UserSchema, session: Session = Depends(create_ses
         try:
             session.add(novo_usuario)
             session.commit()
+            session.refresh(novo_usuario)
 
         except SQLAlchemyError:
             session.rollback()
@@ -70,13 +71,7 @@ async def create_user(usuario: UserSchema, session: Session = Depends(create_ses
 @auth_route.post("/login")
 async def login (dados: UserLogin, session: Session = Depends(create_session)):
 
-    usuario = session.query(Usuarios).filter(Usuarios.email == dados.email).first()
-
-    if not usuario:
-        raise HTTPException(status_code=400, detail="Usuario nao encontardo")
-    
-    if not bcrypt_context.verify(dados.senha, usuario.senha):
-        raise HTTPException(status_code=400, detail="Senha incorreta")
+    usuario = authenticate_user(dados.email, dados.senha, session)
 
     access_token = create_token(usuario.id)
     refresh_token = create_token(usuario.id, tempo_expiracao = timedelta(days=7))
@@ -87,31 +82,23 @@ async def login (dados: UserLogin, session: Session = Depends(create_session)):
         "token_type": "bearer"
     }
 
-@auth_route.get("/me", response_model=UserSchema)
+@auth_route.get("/me", response_model=UserResponse)
 async def read_users_me(current_user: UserSchema = Depends(get_current_user)):
     return current_user
 
 
 @auth_route.post("/login-form")
-async def login_form (dados_form: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(create_session)):
-
-    usuario = authenticate_user(dados_form.username, dados_form.password, session)
-
-    if not usuario:
-        raise HTTPException(status_code=400, detail="Usuario inexistente")
-    
-    access_token = create_token(usuario.id)
-
-    return {
-        "access_token": access_token,
-        "type_token": "bearer"
-    }
-
-
-@auth_route.get("/refresh")
-async def refresh(
-    usuario: Usuarios = Depends(get_current_user)
+async def login_form(
+    dados_form: OAuth2PasswordRequestForm = Depends(),
+    session: Session = Depends(create_session)
 ):
+
+    usuario = authenticate_user(
+        dados_form.username,
+        dados_form.password,
+        session
+    )
+
     access_token = create_token(usuario.id)
 
     return {
