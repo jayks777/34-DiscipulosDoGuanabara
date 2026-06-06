@@ -37,28 +37,6 @@ async def previsao_tempo(
         }
     }
 
-
-@clima_route.get("/historico")
-async def historico_climatico(
-    latitude: float,
-    longitude: float,
-    usuario: Usuarios = Depends(get_current_user)
-):
-
-    dados = ClimaService.obter_historico(
-        latitude,
-        longitude
-    )
-
-    if not dados:
-        raise HTTPException(
-            status_code=500,
-            detail="Erro ao consultar histórico climático"
-        )
-
-    return dados
-
-
 @clima_route.get("/alertas")
 async def alertas_meteorologicos(
     latitude: float,
