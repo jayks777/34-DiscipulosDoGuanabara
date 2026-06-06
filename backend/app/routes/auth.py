@@ -1,4 +1,4 @@
-from fastapi import Session, APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import timedelta, timezone, datetime
@@ -10,12 +10,12 @@ from app.database.models import Usuarios
 
 from app.schemas.user_schema import UserSchema, UserLogin
 
-from app.core.dependencies import create_session, verify_token
+from app.core.dependencies import create_session
 
 auth_route = APIRouter(prefix="/auth", tags=["auth"])
 
 
-def create_token(dados, tempo_expiracao = timedelta(minuntes=ACCESS_TOKEN_EXPIRE_MINUTES)):
+def create_token(dados, tempo_expiracao = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
 
     expiracao = datetime.now(timezone.utc) + tempo_expiracao
 
@@ -44,6 +44,11 @@ async def create_user(usuario: UserSchema, session: Session = Depends(create_ses
     if novo_existente:
         raise HTTPException(status_code=400, detail="Usuario ja existente")
     else:
+        
+        print(usuario)
+        print(usuario.senha)
+        print(type(usuario.senha))
+        print(len(usuario.senha))
         
         senha_criptografada = bcrypt_context.hash(usuario.senha)
         novo_usuario = Usuarios(nome=usuario.nome, email=usuario.email, senha=senha_criptografada)
