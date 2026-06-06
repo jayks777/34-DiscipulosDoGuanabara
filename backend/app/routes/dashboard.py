@@ -4,8 +4,7 @@ from sqlalchemy import func
 from datetime import date
 
 from app.database.models import Receitas, Despesas, Plantacoes, Usuarios
-from app.core.dependencies import create_session, verify_token
-
+from app.core.dependencies import create_session, get_current_user
 from app.schemas.dashboard_schema import (
     DashboardResponseSchema,
     ResumoFinanceiroSchema,
@@ -20,7 +19,7 @@ dashboard_route = APIRouter(
 
 @dashboard_route.get("/", response_model=DashboardResponseSchema)
 async def dashboard(
-    usuario: Usuarios = Depends(verify_token),
+    usuario: Usuarios = Depends(get_current_user),
     session: Session = Depends(create_session)
 ):
 

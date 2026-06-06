@@ -4,15 +4,13 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import timedelta, timezone, datetime
 from jose import jwt, JWTError
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, create_session
 
 from app.main import bcrypt_context, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 from app.database.models import Usuarios
 
 from app.schemas.user_schema import UserSchema, UserLogin
-
-from app.core.dependencies import create_session
 
 auth_route = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -107,4 +105,16 @@ async def login_form (dados_form: OAuth2PasswordRequestForm = Depends(), session
     return {
         "access_token": access_token,
         "type_token": "bearer"
+    }
+
+
+@auth_route.get("/refresh")
+async def refresh(
+    usuario: Usuarios = Depends(get_current_user)
+):
+    access_token = create_token(usuario.id)
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
     }
