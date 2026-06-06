@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import timedelta, timezone, datetime
 from jose import jwt, JWTError
+from app.core import get_current_user
 
 from app.main import bcrypt_context, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
@@ -18,9 +19,6 @@ auth_route = APIRouter(prefix="/auth", tags=["auth"])
 def create_token(dados, tempo_expiracao = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
 
     expiracao = datetime.now(timezone.utc) + tempo_expiracao
-
-    if tempo_expiracao <= 0:
-        raise ValueError("tempo invalido")
 
     dados_token = {
         "sub": str(dados),
@@ -77,3 +75,7 @@ async def login (dados: UserLogin, session: Session = Depends(create_session)):
         "refresh_token": refresh_token,
         "token_type": "bearer"
     }
+
+@auth_route.get("/me", response_model=UserSchema)
+async def read_users_me(current_user: UserSchema = Depends(get_current_user)):
+    return current_user
