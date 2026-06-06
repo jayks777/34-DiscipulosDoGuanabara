@@ -30,11 +30,13 @@ from app.routes.auth import auth_route
 from app.routes.cultures import culturas_route
 from app.routes.dashboard import dashboard_route
 from app.routes.relatorios import relatorio_route
+from app.routes.simulation import simulation_route
 
 App.include_router(auth_route)
 App.include_router(culturas_route)
 App.include_router(dashboard_route)
 App.include_router(relatorio_route)
+App.include_router(simulation_route)
 
 
 #uvicorn app.main:App --reload
