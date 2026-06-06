@@ -1,16 +1,21 @@
 import api from "./requests";
+import { saveTokens } from "../utils/token";
 
 export async function login(
     email,
     password
 ) {
-    return api.postData(
+    const data = await api.postData(
         "/auth/login",
         {
             email,
-            password,
+            senha: password,
         }
     );
+
+    saveTokens(data);
+
+    return data;
 }
 
 export async function register(

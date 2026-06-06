@@ -1,12 +1,22 @@
+import { getAccessToken } from "../utils/token";
+
 class ApiRequests {
     constructor() {
         this.apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/";
     }
 
     getHeaders() {
+        const token = getAccessToken();
+
         return {
             "Content-Type":
-                "application/json"
+                "application/json",
+            ...(token
+                ? {
+                    Authorization:
+                        `Bearer ${token}`,
+                }
+                : {}),
         };
     }
 
@@ -20,8 +30,16 @@ class ApiRequests {
                 : null;
 
         if (!response.ok) {
+            const detail =
+                Array.isArray(data?.detail)
+                    ? data.detail
+                        .map((item) => item?.msg || item?.message)
+                        .filter(Boolean)
+                        .join(", ")
+                    : data?.detail;
+
             throw new Error(
-                data?.detail ||
+                detail ||
                 data?.message ||
                 `Erro HTTP ${response.status}`
             );
@@ -85,6 +103,33 @@ class ApiRequests {
                         "include",
                     body:
                         JSON.stringify(data)
+                }
+            );
+
+        return this.handleResponse(response);
+    }
+
+    async postFormData(endpoint, data) {
+        const body = new URLSearchParams();
+
+        Object.entries(data)
+            .forEach(([key, value]) => {
+                body.append(key, value);
+            });
+
+        const response =
+            await fetch(
+                `${this.apiUrl}${endpoint}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/x-www-form-urlencoded",
+                    },
+                    credentials:
+                        "include",
+                    body:
+                        body.toString()
                 }
             );
 
